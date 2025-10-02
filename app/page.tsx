@@ -3,26 +3,27 @@
 import { useState, useEffect } from 'react';
 import { Transaction, Category, RecurringTransaction } from '@/types';
 import {
-  getCategories,
-  getTransactions,
-  getRecurringTransactions,
-  saveTransaction,
-  updateTransaction,
-  deleteTransaction,
-  saveCategory,
-  updateCategory,
-  deleteCategory,
-  saveRecurringTransaction,
-  updateRecurringTransaction,
-  deleteRecurringTransaction,
-  initializeCategories,
-} from '@/lib/storage';
+  fetchCategories,
+  fetchTransactions,
+  fetchRecurring,
+  createTransaction,
+  deleteTransactionApi,
+  createCategory,
+  updateCategoryApi,
+  deleteCategoryApi,
+  createRecurring,
+  updateRecurringApi,
+  deleteRecurringApi,
+} from '@/lib/api';
 import { DashboardOverview } from '@/components/dashboard-overview';
 import { QuickAddForm } from '@/components/quick-add-form';
 import { TransactionList } from '@/components/transaction-list';
 import { CategoryManager } from '@/components/category-manager';
 import { RecurringManager } from '@/components/recurring-manager';
 import { Button } from '@/components/ui/button';
+import { useSession } from 'next-auth/react';
+import { AuthButtons } from '@/components/auth-buttons';
+import { Landing } from '@/components/landing';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -30,6 +31,7 @@ import { Plus, LayoutDashboard, Receipt, ChartBar as BarChart3, Settings, Repeat
 import { toast } from 'sonner';
 
 export default function Home() {
+  const { data: session, status } = useSession();
   const [categories, setCategories] = useState<Category[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [recurring, setRecurring] = useState<RecurringTransaction[]>([]);
@@ -38,14 +40,32 @@ export default function Home() {
 
   useEffect(() => {
     setMounted(true);
-    initializeCategories();
-    loadData();
   }, []);
 
-  const loadData = () => {
-    setCategories(getCategories());
-    setTransactions(getTransactions());
-    setRecurring(getRecurringTransactions());
+  useEffect(() => {
+    if (status === 'authenticated') {
+      loadData();
+    } else {
+      setCategories([]);
+      setTransactions([]);
+      setRecurring([]);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status]);
+
+  const loadData = async () => {
+    try {
+      const [cats, txns, rec] = await Promise.all([
+        fetchCategories(),
+        fetchTransactions(),
+        fetchRecurring(),
+      ]);
+      setCategories(cats);
+      setTransactions(txns);
+      setRecurring(rec);
+    } catch (e) {
+      // ignore for now, toast could be added
+    }
   };
 
   const handleAddTransaction = (data: {
@@ -54,32 +74,60 @@ export default function Home() {
     categoryId: string;
     date: Date;
     description?: string;
+    receiptFile?: File | null;
   }) => {
-    saveTransaction({
-      ...data,
-      userId: 'default_user',
-    });
-    loadData();
-    setShowQuickAdd(false);
-    toast.success('Transaction added successfully');
+    const doCreate = async () => {
+      let receiptUrl: string | undefined = undefined;
+      if (data.receiptFile) {
+        try {
+          const { uploadReceipt } = await import('@/lib/api');
+          receiptUrl = await uploadReceipt(data.receiptFile);
+        } catch {}
+      }
+      await createTransaction({
+        amount: data.amount,
+        type: data.type,
+        categoryId: data.categoryId,
+        date: data.date,
+        description: data.description,
+        receiptUrl,
+      } as any);
+    };
+
+    doCreate()
+      .then(() => {
+        loadData();
+        setShowQuickAdd(false);
+        toast.success('Transaction added successfully');
+      })
+      .catch(() => toast.error('Failed to add transaction'));
   };
 
   const handleDeleteTransaction = (id: string) => {
-    deleteTransaction(id);
-    loadData();
-    toast.success('Transaction deleted');
+    deleteTransactionApi(id)
+      .then(() => {
+        loadData();
+        toast.success('Transaction deleted');
+      })
+      .catch(() => toast.error('Failed to delete transaction'));
   };
 
   const handleAddCategory = (category: Omit<Category, 'id' | 'createdAt'>) => {
-    saveCategory(category);
-    loadData();
-    toast.success('Category created successfully');
+    createCategory(category)
+      .then(() => {
+        loadData();
+        toast.success('Category created successfully');
+      })
+      .catch(() => toast.error('Failed to create category'));
   };
 
   const handleUpdateCategory = (id: string, updates: Partial<Category>) => {
-    updateCategory(id, updates);
-    loadData();
-    toast.success('Category updated successfully');
+    updateCategoryApi(id, updates)
+      .then(() => {
+        loadData();
+        toast.success('Category updated successfully');
+      })
+      .catch(() => toast.error('Failed to update category'));
   };
 
   const handleDeleteCategory = (id: string) => {
@@ -88,31 +136,47 @@ export default function Home() {
       toast.error('Cannot delete category with existing transactions');
       return;
     }
-    deleteCategory(id);
-    loadData();
-    toast.success('Category deleted');
+    deleteCategoryApi(id)
+      .then(() => {
+        loadData();
+        toast.success('Category deleted');
+      })
+      .catch(() => toast.error('Failed to delete category'));
   };
 
   const handleAddRecurring = (data: Omit<RecurringTransaction, 'id' | 'createdAt' | 'updatedAt'>) => {
-    saveRecurringTransaction(data);
-    loadData();
-    toast.success('Recurring transaction created');
+    createRecurring(data)
+      .then(() => {
+        loadData();
+        toast.success('Recurring transaction created');
+      })
+      .catch(() => toast.error('Failed to create recurring'));
   };
 
   const handleUpdateRecurring = (id: string, updates: Partial<RecurringTransaction>) => {
-    updateRecurringTransaction(id, updates);
-    loadData();
-    toast.success('Recurring transaction updated');
+    updateRecurringApi(id, updates)
+      .then(() => {
+        loadData();
+        toast.success('Recurring transaction updated');
+      })
+      .catch(() => toast.error('Failed to update recurring'));
   };
 
   const handleDeleteRecurring = (id: string) => {
-    deleteRecurringTransaction(id);
-    loadData();
-    toast.success('Recurring transaction deleted');
+    deleteRecurringApi(id)
+      .then(() => {
+        loadData();
+        toast.success('Recurring transaction deleted');
+      })
+      .catch(() => toast.error('Failed to delete recurring'));
   };
 
   if (!mounted) {
     return null;
+  }
+
+  if (status !== 'authenticated') {
+    return <Landing />;
   }
 
   return (
@@ -125,13 +189,16 @@ export default function Home() {
             </h1>
             <p className="text-zinc-400 mt-1">Smart budget tracking made simple</p>
           </div>
-          <Button
+          <div className="flex items-center gap-3">
+            <AuthButtons />
+            <Button
             onClick={() => setShowQuickAdd(true)}
             className="bg-violet-600 hover:bg-violet-700"
           >
             <Plus className="w-4 h-4 mr-2" />
             Quick Add
-          </Button>
+            </Button>
+          </div>
         </div>
 
         <Tabs defaultValue="dashboard" className="space-y-6">

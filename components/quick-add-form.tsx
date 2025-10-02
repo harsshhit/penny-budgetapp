@@ -22,6 +22,7 @@ interface QuickAddFormProps {
     categoryId: string;
     date: Date;
     description?: string;
+    receiptFile?: File | null;
   }) => void;
   onCancel?: () => void;
 }
@@ -32,6 +33,7 @@ export function QuickAddForm({ categories, onSubmit, onCancel }: QuickAddFormPro
   const [categoryId, setCategoryId] = useState('');
   const [date, setDate] = useState<Date>(new Date());
   const [description, setDescription] = useState('');
+  const [receiptFile, setReceiptFile] = useState<File | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const filteredCategories = categories.filter(c => c.type === type);
@@ -62,12 +64,14 @@ export function QuickAddForm({ categories, onSubmit, onCancel }: QuickAddFormPro
       categoryId,
       date,
       description: description.trim() || undefined,
+      receiptFile,
     });
 
     setAmount('');
     setCategoryId('');
     setDescription('');
     setDate(new Date());
+    setReceiptFile(null);
   };
 
   return (
@@ -181,6 +185,17 @@ export function QuickAddForm({ categories, onSubmit, onCancel }: QuickAddFormPro
           onChange={(e) => setDescription(e.target.value)}
           className="bg-zinc-900 border-zinc-700 text-white resize-none"
           rows={3}
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="receipt" className="text-zinc-300">Receipt (Optional)</Label>
+        <Input
+          id="receipt"
+          type="file"
+          accept="image/*,application/pdf"
+          onChange={(e) => setReceiptFile(e.target.files?.[0] || null)}
+          className="bg-zinc-900 border-zinc-700 text-white"
         />
       </div>
 

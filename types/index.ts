@@ -49,6 +49,15 @@ export interface RecurringTransaction {
   updatedAt: Date;
 }
 
+export interface UserProfile {
+  id: string;
+  name?: string | null;
+  email?: string | null;
+  image?: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export interface CategoryWithTransactions extends Category {
   totalAmount: number;
   transactionCount: number;
