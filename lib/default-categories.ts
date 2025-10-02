@@ -1,0 +1,88 @@
+import { Category } from '@/types';
+
+export const DEFAULT_CATEGORIES: Omit<Category, 'id' | 'createdAt'>[] = [
+  {
+    name: 'Salary',
+    type: 'income',
+    color: '#10b981',
+    icon: 'Briefcase',
+    isDefault: true,
+  },
+  {
+    name: 'Freelance',
+    type: 'income',
+    color: '#059669',
+    icon: 'Code',
+    isDefault: true,
+  },
+  {
+    name: 'Investments',
+    type: 'income',
+    color: '#34d399',
+    icon: 'TrendingUp',
+    isDefault: true,
+  },
+  {
+    name: 'Other Income',
+    type: 'income',
+    color: '#6ee7b7',
+    icon: 'DollarSign',
+    isDefault: true,
+  },
+  {
+    name: 'Food',
+    type: 'expense',
+    color: '#ef4444',
+    icon: 'Utensils',
+    isDefault: true,
+  },
+  {
+    name: 'Transportation',
+    type: 'expense',
+    color: '#f97316',
+    icon: 'Car',
+    isDefault: true,
+  },
+  {
+    name: 'Housing',
+    type: 'expense',
+    color: '#8b5cf6',
+    icon: 'Home',
+    isDefault: true,
+  },
+  {
+    name: 'Utilities',
+    type: 'expense',
+    color: '#3b82f6',
+    icon: 'Zap',
+    isDefault: true,
+  },
+  {
+    name: 'Health',
+    type: 'expense',
+    color: '#ec4899',
+    icon: 'Heart',
+    isDefault: true,
+  },
+  {
+    name: 'Entertainment',
+    type: 'expense',
+    color: '#f59e0b',
+    icon: 'Film',
+    isDefault: true,
+  },
+  {
+    name: 'Shopping',
+    type: 'expense',
+    color: '#14b8a6',
+    icon: 'ShoppingBag',
+    isDefault: true,
+  },
+  {
+    name: 'Education',
+    type: 'expense',
+    color: '#06b6d4',
+    icon: 'GraduationCap',
+    isDefault: true,
+  },
+];
