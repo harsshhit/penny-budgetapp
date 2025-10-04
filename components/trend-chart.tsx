@@ -10,8 +10,10 @@ interface TrendChartProps {
 export function TrendChart({ data }: TrendChartProps) {
   if (data.length === 0) {
     return (
-      <div className="flex items-center justify-center h-[300px] text-zinc-500">
-        No data available
+      <div className="flex flex-col items-center justify-center h-[300px] text-violet-400/70 space-y-3">
+        <span className="text-4xl">📊</span>
+        <p className="text-lg font-medium">No data yet</p>
+        <p className="text-sm">Start adding transactions to see your trends!</p>
       </div>
     );
   }
@@ -22,55 +24,70 @@ export function TrendChart({ data }: TrendChartProps) {
         <AreaChart data={data}>
           <defs>
             <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
-              <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+              <stop offset="5%" stopColor="#a855f7" stopOpacity={0.4} />
+              <stop offset="95%" stopColor="#a855f7" stopOpacity={0} />
             </linearGradient>
             <linearGradient id="colorExpense" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3} />
-              <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
+              <stop offset="5%" stopColor="#9333ea" stopOpacity={0.3} />
+              <stop offset="95%" stopColor="#9333ea" stopOpacity={0} />
             </linearGradient>
           </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke="#3f3f46" />
+          <CartesianGrid strokeDasharray="2 2" stroke="#a855f7" strokeOpacity={0.2} />
           <XAxis
             dataKey="month"
-            stroke="#71717a"
-            style={{ fontSize: '12px' }}
+            stroke="#a855f7"
+            strokeOpacity={0.7}
+            style={{ fontSize: '13px', fontWeight: '500' }}
+            tick={{ fill: '#a855f7' }}
           />
           <YAxis
-            stroke="#71717a"
-            style={{ fontSize: '12px' }}
+            stroke="#a855f7"
+            strokeOpacity={0.7}
+            style={{ fontSize: '13px', fontWeight: '500' }}
+            tick={{ fill: '#a855f7' }}
             tickFormatter={(value) => `$${value}`}
           />
           <Tooltip
             contentStyle={{
-              backgroundColor: '#18181b',
-              border: '1px solid #3f3f46',
-              borderRadius: '8px',
+              backgroundColor: '#000000',
+              border: '1px solid #a855f7',
+              borderRadius: '12px',
               color: '#fff',
+              boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
             }}
-            formatter={(value: number) => formatCurrency(value)}
+            formatter={(value: number) => [formatCurrency(value), '']}
+            labelStyle={{ color: '#a855f7', fontWeight: '600' }}
           />
           <Legend
             verticalAlign="top"
             height={36}
             iconType="circle"
-            formatter={(value) => <span className="text-zinc-300 text-sm capitalize">{value}</span>}
+            wrapperStyle={{ paddingBottom: '20px' }}
+            formatter={(value) => (
+              <span className="text-violet-400 text-sm font-medium capitalize">
+                {value === 'income' ? '💰 Income' : '💸 Expenses'}
+              </span>
+            )}
           />
           <Area
             type="monotone"
             dataKey="income"
-            stroke="#10b981"
-            strokeWidth={2}
+            stroke="#a855f7"
+            strokeWidth={3}
             fillOpacity={1}
             fill="url(#colorIncome)"
+            dot={{ fill: '#a855f7', strokeWidth: 2, r: 4 }}
+            activeDot={{ r: 6, fill: '#a855f7', stroke: '#fff', strokeWidth: 2 }}
           />
           <Area
             type="monotone"
             dataKey="expense"
-            stroke="#ef4444"
-            strokeWidth={2}
+            stroke="#9333ea"
+            strokeWidth={3}
             fillOpacity={1}
             fill="url(#colorExpense)"
+            dot={{ fill: '#9333ea', strokeWidth: 2, r: 4 }}
+            activeDot={{ r: 6, fill: '#9333ea', stroke: '#fff', strokeWidth: 2 }}
           />
         </AreaChart>
       </ResponsiveContainer>

@@ -22,12 +22,12 @@ import { CategoryManager } from '@/components/category-manager';
 import { RecurringManager } from '@/components/recurring-manager';
 import { Button } from '@/components/ui/button';
 import { useSession } from 'next-auth/react';
-import { AuthButtons } from '@/components/auth-buttons';
 import { Landing } from '@/components/landing';
+import { Navbar } from '@/components/navbar';
+import { FloatingAddButton } from '@/components/floating-add-button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Plus, LayoutDashboard, Receipt, ChartBar as BarChart3, Settings, Repeat } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function Home() {
@@ -37,6 +37,7 @@ export default function Home() {
   const [recurring, setRecurring] = useState<RecurringTransaction[]>([]);
   const [showQuickAdd, setShowQuickAdd] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [currentTab, setCurrentTab] = useState('dashboard');
 
   useEffect(() => {
     setMounted(true);
@@ -181,55 +182,18 @@ export default function Home() {
 
   return (
     <div className="min-h-screen">
+      <Navbar 
+        currentTab={currentTab}
+        onTabChange={setCurrentTab}
+        showTabs={true}
+      />
       <div className="container max-w-7xl mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
-              Penny
-            </h1>
-            <p className="text-zinc-400 mt-1">Smart budget tracking made simple</p>
-          </div>
-          <div className="flex items-center gap-3">
-            <AuthButtons />
-            <Button
-            onClick={() => setShowQuickAdd(true)}
-            className="bg-violet-600 hover:bg-violet-700"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Quick Add
-            </Button>
-          </div>
-        </div>
-
-        <Tabs defaultValue="dashboard" className="space-y-6">
-          <TabsList className="grid w-full max-w-2xl mx-auto grid-cols-5 bg-zinc-900 border border-zinc-800">
-            <TabsTrigger value="dashboard" className="data-[state=active]:bg-zinc-800">
-              <LayoutDashboard className="w-4 h-4 mr-2" />
-              <span className="hidden sm:inline">Dashboard</span>
-            </TabsTrigger>
-            <TabsTrigger value="transactions" className="data-[state=active]:bg-zinc-800">
-              <Receipt className="w-4 h-4 mr-2" />
-              <span className="hidden sm:inline">Transactions</span>
-            </TabsTrigger>
-            <TabsTrigger value="recurring" className="data-[state=active]:bg-zinc-800">
-              <Repeat className="w-4 h-4 mr-2" />
-              <span className="hidden sm:inline">Recurring</span>
-            </TabsTrigger>
-            <TabsTrigger value="categories" className="data-[state=active]:bg-zinc-800">
-              <BarChart3 className="w-4 h-4 mr-2" />
-              <span className="hidden sm:inline">Categories</span>
-            </TabsTrigger>
-            <TabsTrigger value="settings" className="data-[state=active]:bg-zinc-800">
-              <Settings className="w-4 h-4 mr-2" />
-              <span className="hidden sm:inline">Settings</span>
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="dashboard">
+        <div className="space-y-6">
+          {currentTab === 'dashboard' && (
             <DashboardOverview transactions={transactions} categories={categories} />
-          </TabsContent>
+          )}
 
-          <TabsContent value="transactions">
+          {currentTab === 'transactions' && (
             <Card className="bg-zinc-900 border-zinc-800">
               <CardHeader>
                 <div className="flex items-center justify-between">
@@ -252,9 +216,9 @@ export default function Home() {
                 />
               </CardContent>
             </Card>
-          </TabsContent>
+          )}
 
-          <TabsContent value="recurring">
+          {currentTab === 'recurring' && (
             <Card className="bg-zinc-900 border-zinc-800">
               <CardContent className="pt-6">
                 <RecurringManager
@@ -266,9 +230,9 @@ export default function Home() {
                 />
               </CardContent>
             </Card>
-          </TabsContent>
+          )}
 
-          <TabsContent value="categories">
+          {currentTab === 'categories' && (
             <Card className="bg-zinc-900 border-zinc-800">
               <CardContent className="pt-6">
                 <CategoryManager
@@ -279,9 +243,9 @@ export default function Home() {
                 />
               </CardContent>
             </Card>
-          </TabsContent>
+          )}
 
-          <TabsContent value="settings">
+          {currentTab === 'settings' && (
             <Card className="bg-zinc-900 border-zinc-800">
               <CardHeader>
                 <CardTitle className="text-white">Settings</CardTitle>
@@ -310,9 +274,11 @@ export default function Home() {
                 </div>
               </CardContent>
             </Card>
-          </TabsContent>
-        </Tabs>
+          )}
+        </div>
       </div>
+
+      <FloatingAddButton onClick={() => setShowQuickAdd(true)} />
 
       <Dialog open={showQuickAdd} onOpenChange={setShowQuickAdd}>
         <DialogContent className="bg-zinc-900 border-zinc-700 text-white">

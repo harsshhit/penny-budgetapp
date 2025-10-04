@@ -2,11 +2,15 @@
 
 import { signIn } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
+import { Navbar } from '@/components/navbar';
 import { Shield, BarChart2, Zap, Repeat, Layers, PieChart, UploadCloud, Download, CreditCard, ArrowDownRight, ArrowUpRight } from 'lucide-react';
 
 export function Landing() {
   return (
     <div className="min-h-screen bg-black text-white">
+      {/* Navbar for unauthenticated users */}
+      <Navbar showTabs={false} />
+      
       {/* Glow background accents */}
       <div className="pointer-events-none fixed inset-0 -z-10">
         <div className="absolute -top-24 -left-24 h-64 w-64 rounded-full blur-3xl" style={{ background: 'radial-gradient(closest-side, rgba(147,51,234,0.08), transparent)' }} />
@@ -14,28 +18,6 @@ export function Landing() {
       </div>
 
       <div className="container max-w-7xl mx-auto px-4 py-6 md:py-10">
-        {/* Header */}
-        <header className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-md" style={{ backgroundColor: '#9333ea' }} />
-            <h1 className="text-2xl font-black tracking-tight" style={{ color: '#9333ea' }}>Penny</h1>
-          </div>
-          <div className="flex items-center gap-3">
-            <Button
-              onClick={() => signIn('google')}
-              className="bg-black border border-[#9333ea] text-[#9333ea] hover:bg-[#0f0f0f]"
-              variant="outline"
-            >
-              Sign in with Google
-            </Button>
-            <Button
-              onClick={() => signIn('google')}
-              className="bg-[#9333ea] text-white hover:bg-[#7c3aed]"
-            >
-              Get Started
-            </Button>
-          </div>
-        </header>
 
         {/* Hero */}
         <section className="mt-14 md:mt-20 grid gap-10 md:grid-cols-2 md:items-center">
@@ -211,10 +193,17 @@ export function Landing() {
           <h4 className="text-2xl font-bold">Ready to budget like royalty?</h4>
           <p className="mt-2 text-zinc-400">Sign in and start tracking in under 10 seconds.</p>
           <div className="mt-5 flex justify-center gap-3">
-            <Button onClick={() => signIn('google')} className="bg-[#9333ea] text-black hover:bg-[#e6c200]">
+            <Button
+              onClick={() => signIn('google')}
+              className="bg-[#9333ea] text-white hover:bg-[#7c3aed]"
+            >
               Get Started
             </Button>
-            <Button onClick={() => signIn('google')} className="bg-black border border-[#9333ea] text-[#9333ea] hover:bg-[#0f0f0f]" variant="outline">
+            <Button
+              onClick={() => signIn('google')}
+              className="bg-black border border-[#9333ea] text-[#9333ea] hover:bg-[#0f0f0f]"
+              variant="outline"
+            >
               Sign in with Google
             </Button>
           </div>
