@@ -1,395 +1,227 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { signIn } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Wallet, TrendingUp, ChartPie as PieChart, Zap, Shield, Smartphone, ArrowRight, Star, Sparkles, Target, ChartBar as BarChart3, Clock, CircleCheck as CheckCircle2 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Navbar } from '@/components/navbar';
+import { Shield, BarChart2, Zap, Repeat, Layers, PieChart, UploadCloud, Download, CreditCard, ArrowDownRight, ArrowUpRight } from 'lucide-react';
 
-interface LandingProps {
-  onGetStarted: () => void;
-}
-
-export function Landing({ onGetStarted }: LandingProps) {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) return null;
-
+export function Landing() {
   return (
-    <div className="relative min-h-screen overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-[#0F172A] via-[#1E1B4B] to-[#0F172A]" />
-
-      <div className="absolute inset-0 opacity-30">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-violet-600/30 rounded-full blur-[100px] animate-pulse" />
-        <div className="absolute top-40 right-20 w-96 h-96 bg-fuchsia-600/30 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '1s' }} />
-        <div className="absolute bottom-20 left-1/3 w-80 h-80 bg-cyan-600/30 rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '0.5s' }} />
+    <div className="min-h-screen bg-black text-white">
+      {/* Navbar for unauthenticated users */}
+      <Navbar showTabs={false} />
+      
+      {/* Glow background accents */}
+      <div className="pointer-events-none fixed inset-0 -z-10">
+        <div className="absolute -top-24 -left-24 h-64 w-64 rounded-full blur-3xl" style={{ background: 'radial-gradient(closest-side, rgba(147,51,234,0.08), transparent)' }} />
+        <div className="absolute -bottom-24 -right-24 h-64 w-64 rounded-full blur-3xl" style={{ background: 'radial-gradient(closest-side, rgba(147,51,234,0.06), transparent)' }} />
       </div>
 
-      <div className="absolute inset-0 opacity-20">
-        {[...Array(20)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute w-1 h-1 bg-white rounded-full animate-float"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 3}s`,
-              animationDuration: `${3 + Math.random() * 4}s`,
-            }}
-          />
-        ))}
-      </div>
+      <div className="container max-w-7xl mx-auto px-4 py-6 md:py-10">
 
-      <div className="relative z-10">
-        <nav className="container max-w-7xl mx-auto px-4 py-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-600 to-fuchsia-600 flex items-center justify-center shadow-lg shadow-violet-500/50">
-                <Sparkles className="w-6 h-6 text-white" />
-              </div>
-              <span className="text-2xl font-bold bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
-                Penny
-              </span>
+        {/* Hero */}
+        <section className="mt-14 md:mt-20 grid gap-10 md:grid-cols-2 md:items-center">
+          <div className="space-y-6">
+            <div className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs" style={{ borderColor: 'rgba(147,51,234,0.25)', color: '#9333ea' }}>
+              <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: '#9333ea' }} />
+              Multi-user. Private. Fast.
             </div>
-            <Button
-              onClick={onGetStarted}
-              className="bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-700 hover:to-fuchsia-700 text-white shadow-lg shadow-violet-500/50 hover:shadow-xl hover:shadow-violet-500/60 transition-all duration-300"
-            >
-              Get Started
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
+            <h2 className="text-4xl md:text-6xl font-extrabold leading-[1.1]">
+              Your money, mastered.
+            </h2>
+            <p className="text-zinc-400 text-lg max-w-prose">
+              Penny brings your income, expenses, categories, and insights together with a delightful, blazing-fast experience.
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <Button
+                onClick={() => signIn('google')}
+                className="bg-[#9333ea] text-white hover:bg-[#7c3aed]"
+              >
+                Start free with Google
+              </Button>
+              <Button
+                onClick={() => signIn('google')}
+                className="bg-black border border-[#9333ea] text-[#9333ea] hover:bg-[#0f0f0f]"
+                variant="outline"
+              >
+                Live Demo
+              </Button>
+            </div>
+            {/* Stat pills */}
+            <div className="mt-6 grid grid-cols-3 gap-4">
+              <div className="rounded-lg border p-4 text-center" style={{ borderColor: 'rgba(147,51,234,0.15)' }}>
+                <div className="text-xl font-bold" style={{ color: '#9333ea' }}>1k+</div>
+                <div className="text-xs text-zinc-400">Active users</div>
+              </div>
+              <div className="rounded-lg border p-4 text-center" style={{ borderColor: 'rgba(147,51,234,0.15)' }}>
+                <div className="text-xl font-bold" style={{ color: '#9333ea' }}>99.9%</div>
+                <div className="text-xs text-zinc-400">Uptime</div>
+              </div>
+              <div className="rounded-lg border p-4 text-center" style={{ borderColor: 'rgba(147,51,234,0.15)' }}>
+                <div className="text-xl font-bold" style={{ color: '#9333ea' }}>&lt;100ms</div>
+                <div className="text-xs text-zinc-400">Avg. load</div>
+              </div>
+            </div>
           </div>
-        </nav>
-
-        <section className="container max-w-7xl mx-auto px-4 pt-20 pb-32">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-8 animate-fade-in-up">
-              <div className="inline-block">
-                <span className="px-4 py-2 rounded-full bg-gradient-to-r from-violet-500/20 to-fuchsia-500/20 border border-violet-500/30 text-violet-300 text-sm font-medium backdrop-blur-sm">
-                  ✨ Track Every Penny, Save Every Dollar
-                </span>
-              </div>
-
-              <h1 className="text-5xl md:text-7xl font-bold leading-tight">
-                <span className="bg-gradient-to-r from-violet-400 via-fuchsia-400 to-pink-400 bg-clip-text text-transparent">
-                  Budget Like
-                </span>
-                <br />
-                <span className="text-white">A Boss</span>
-              </h1>
-
-              <p className="text-xl text-zinc-300 leading-relaxed max-w-xl">
-                Take control of your finances with AI-powered insights, beautiful visualizations,
-                and effortless expense tracking. Welcome to the future of budgeting.
-              </p>
-
-              <div className="flex flex-wrap gap-4">
-                <Button
-                  onClick={onGetStarted}
-                  size="lg"
-                  className="bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-700 hover:to-fuchsia-700 text-white text-lg px-8 py-6 rounded-xl shadow-2xl shadow-violet-500/50 hover:shadow-violet-500/70 hover:scale-105 transition-all duration-300 group"
-                >
-                  Start Tracking Free
-                  <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="text-lg px-8 py-6 rounded-xl border-2 border-zinc-700 hover:border-violet-500/50 bg-zinc-900/50 backdrop-blur-sm hover:bg-zinc-800/50 transition-all duration-300"
-                >
-                  Watch Demo
-                </Button>
-              </div>
-
-              <div className="flex items-center gap-8 pt-4">
-                <div className="flex items-center gap-2">
-                  <div className="flex -space-x-2">
-                    {[1, 2, 3, 4].map((i) => (
-                      <div
-                        key={i}
-                        className="w-10 h-10 rounded-full border-2 border-zinc-900 bg-gradient-to-br from-violet-500 to-fuchsia-500"
-                      />
-                    ))}
+          {/* Device preview inspired by mobile UI, in gold theme */}
+          <div className="relative">
+            <div className="absolute -inset-0.5 rounded-2xl" style={{ background: 'linear-gradient(135deg, rgba(147,51,234,0.25), rgba(147,51,234,0))' }} />
+            <div className="relative grid gap-4 md:gap-5">
+              {/* Stacked card */}
+              <div className="relative mx-auto w-[280px] rounded-3xl border bg-black/70 p-5 shadow-2xl" style={{ borderColor: 'rgba(147,51,234,0.25)' }}>
+                <div className="absolute -top-6 right-6 h-16 w-16 rounded-full blur-2xl opacity-60" style={{ background: 'radial-gradient(closest-side, rgba(147,51,234,0.45), transparent)' }} />
+                <div className="flex items-center gap-3">
+                  <div className="h-9 w-14 rounded-md" style={{ background: 'linear-gradient(135deg, #9333ea, #7c3aed)' }} />
+                  <div>
+                    <div className="text-xs text-zinc-400">Your Balance</div>
+                    <div className="text-lg font-bold tracking-tight" style={{ color: '#9333ea' }}>$48,678.00</div>
                   </div>
-                  <div className="text-sm">
-                    <div className="flex gap-1 text-yellow-400">
-                      {[1, 2, 3, 4, 5].map((i) => (
-                        <Star key={i} className="w-4 h-4 fill-current" />
-                      ))}
+                </div>
+                <div className="mt-4 rounded-xl p-4" style={{ background: 'linear-gradient(135deg, rgba(147,51,234,0.15), rgba(147,51,234,0.05))' }}>
+                  <div className="flex items-center justify-between text-xs text-zinc-400">
+                    <span>Transactions</span>
+                    <span>Today</span>
+                  </div>
+                  <div className="mt-3 space-y-2">
+                    <div className="flex items-center justify-between text-sm">
+                      <div className="flex items-center gap-2"><ArrowDownRight size={14} className="text-rose-400" /><span>Coffee</span></div>
+                      <span className="text-rose-400">-$6.20</span>
                     </div>
-                    <p className="text-zinc-400">10k+ happy users</p>
+                    <div className="flex items-center justify-between text-sm">
+                      <div className="flex items-center gap-2"><ArrowUpRight size={14} className="text-emerald-400" /><span>Salary</span></div>
+                      <span className="text-emerald-400">+$3,200.00</span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <div className="flex items-center gap-2"><ArrowDownRight size={14} className="text-rose-400" /><span>Groceries</span></div>
+                      <span className="text-rose-400">-$54.18</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-4 grid grid-cols-2 gap-3">
+                  <button className="rounded-lg py-2 text-sm font-medium" style={{ backgroundColor: '#0d0d0d', border: '1px solid rgba(147,51,234,0.2)', color: '#9333ea' }}>Receive</button>
+                  <button className="rounded-lg py-2 text-sm font-medium bg-[#9333ea] text-white hover:bg-[#7c3aed]">Transfer</button>
+                </div>
+              </div>
+
+              {/* Chart + categories card */}
+              <div className="mx-auto w-[280px] rounded-3xl border bg-black/70 p-4 shadow-2xl" style={{ borderColor: 'rgba(147,51,234,0.25)' }}>
+                <div className="mb-3 flex items-center justify-between">
+                  <span className="text-sm text-zinc-300">Statistics</span>
+                  <span className="text-xs text-zinc-500">Month</span>
+                </div>
+                {/* Faux line chart */}
+                <div className="h-24 w-full overflow-hidden rounded-md bg-[#0a0a0a]">
+                  <div className="relative h-full w-full">
+                    <div className="absolute inset-x-0 bottom-0 h-1.5" style={{ background: 'linear-gradient(90deg, rgba(147,51,234,0), rgba(147,51,234,0.8), rgba(147,51,234,0))' }} />
+                    <svg viewBox="0 0 100 40" className="h-full w-full">
+                      <path d="M0 28 L10 26 L20 30 L30 18 L40 22 L50 12 L60 20 L70 16 L80 26 L90 20 L100 24" fill="none" stroke="#9333ea" strokeWidth="2" />
+                    </svg>
+                  </div>
+                </div>
+                <div className="mt-3 grid grid-cols-2 gap-3">
+                  <div className="rounded-lg border p-3" style={{ borderColor: 'rgba(147,51,234,0.15)' }}>
+                    <div className="text-xs text-zinc-400">Food</div>
+                    <div className="text-sm font-semibold">$1,780.34</div>
+                  </div>
+                  <div className="rounded-lg border p-3" style={{ borderColor: 'rgba(147,51,234,0.15)' }}>
+                    <div className="text-xs text-zinc-400">Health</div>
+                    <div className="text-sm font-semibold">$890.12</div>
                   </div>
                 </div>
               </div>
             </div>
-
-            <div className="relative" style={{ animationDelay: '0.3s' }}>
-              <div className="relative">
-                <div className="absolute -inset-4 bg-gradient-to-r from-violet-600/30 to-fuchsia-600/30 rounded-3xl blur-2xl" />
-                <Card className="relative bg-gradient-to-br from-zinc-900/90 to-zinc-800/90 border-2 border-violet-500/30 backdrop-blur-xl shadow-2xl overflow-hidden">
-                  <CardContent className="p-8">
-                    <div className="space-y-6">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-sm text-zinc-400">Your Balance</p>
-                          <h3 className="text-4xl font-bold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
-                            $48,678.00
-                          </h3>
-                        </div>
-                        <div className="p-4 rounded-2xl bg-gradient-to-br from-emerald-500/20 to-cyan-500/20 border border-emerald-500/30">
-                          <TrendingUp className="w-8 h-8 text-emerald-400" />
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="p-4 rounded-xl bg-gradient-to-br from-violet-500/10 to-fuchsia-500/10 border border-violet-500/20">
-                          <p className="text-xs text-zinc-400 mb-1">Income</p>
-                          <p className="text-xl font-bold text-emerald-400">+$12,340</p>
-                        </div>
-                        <div className="p-4 rounded-xl bg-gradient-to-br from-rose-500/10 to-pink-500/10 border border-rose-500/20">
-                          <p className="text-xs text-zinc-400 mb-1">Expenses</p>
-                          <p className="text-xl font-bold text-rose-400">-$8,450</p>
-                        </div>
-                      </div>
-
-                      <div className="space-y-3">
-                        {[
-                          { name: 'Food & Dining', amount: '$1,234', color: 'from-red-500 to-orange-500' },
-                          { name: 'Transportation', amount: '$567', color: 'from-blue-500 to-cyan-500' },
-                          { name: 'Entertainment', amount: '$890', color: 'from-purple-500 to-pink-500' },
-                        ].map((item, i) => (
-                          <div
-                            key={i}
-                            className="flex items-center justify-between p-3 rounded-lg bg-zinc-800/50 border border-zinc-700/50 hover:border-violet-500/30 transition-all duration-300 hover:scale-[1.02]"
-                          >
-                            <div className="flex items-center gap-3">
-                              <div className={cn('w-2 h-8 rounded-full bg-gradient-to-b', item.color)} />
-                              <span className="text-sm font-medium text-zinc-300">{item.name}</span>
-                            </div>
-                            <span className="text-sm font-semibold text-white">{item.amount}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <div className="absolute -top-8 -right-8 w-24 h-24 bg-gradient-to-br from-violet-500 to-fuchsia-500 rounded-2xl rotate-12 opacity-20 blur-xl animate-float" />
-                <div className="absolute -bottom-8 -left-8 w-32 h-32 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-full opacity-20 blur-xl animate-float" style={{ animationDelay: '0.5s' }} />
-              </div>
-            </div>
           </div>
         </section>
 
-        <section className="container max-w-7xl mx-auto px-4 py-20">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              <span className="bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
-                Everything You Need
-              </span>
-            </h2>
-            <p className="text-xl text-zinc-400 max-w-2xl mx-auto">
-              Powerful features designed to make budgeting effortless and actually fun
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Feature grid */}
+        <section className="mt-16 md:mt-24">
+          <h3 className="text-xl font-semibold mb-6" style={{ color: '#9333ea' }}>Why Penny?</h3>
+          <div className="grid gap-4 md:grid-cols-3">
             {[
-              {
-                icon: Zap,
-                title: 'Lightning Fast',
-                description: 'Add transactions in seconds with smart auto-complete and quick actions',
-                gradient: 'from-yellow-500 to-orange-500',
-                glowColor: 'shadow-yellow-500/50',
-              },
-              {
-                icon: PieChart,
-                title: 'Visual Insights',
-                description: 'Beautiful charts and graphs that make your spending crystal clear',
-                gradient: 'from-violet-500 to-fuchsia-500',
-                glowColor: 'shadow-violet-500/50',
-              },
-              {
-                icon: Target,
-                title: 'Smart Goals',
-                description: 'Set savings targets and watch your progress with real-time tracking',
-                gradient: 'from-emerald-500 to-cyan-500',
-                glowColor: 'shadow-emerald-500/50',
-              },
-              {
-                icon: Shield,
-                title: 'Bank-Level Security',
-                description: 'Your data is encrypted and stored locally. Total privacy guaranteed',
-                gradient: 'from-blue-500 to-cyan-500',
-                glowColor: 'shadow-blue-500/50',
-              },
-              {
-                icon: Smartphone,
-                title: 'Mobile First',
-                description: 'Optimized for on-the-go tracking with native app performance',
-                gradient: 'from-pink-500 to-rose-500',
-                glowColor: 'shadow-pink-500/50',
-              },
-              {
-                icon: BarChart3,
-                title: 'Recurring Bills',
-                description: 'Never miss a payment with automated recurring transaction tracking',
-                gradient: 'from-indigo-500 to-purple-500',
-                glowColor: 'shadow-indigo-500/50',
-              },
-            ].map((feature, i) => (
-              <Card
-                key={i}
-                className="group relative bg-gradient-to-br from-zinc-900/90 to-zinc-800/90 border-2 border-zinc-700/50 hover:border-violet-500/50 backdrop-blur-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl overflow-hidden"
-                style={{ animationDelay: `${i * 100}ms` }}
-              >
-                <div className="absolute inset-0 bg-gradient-to-br from-violet-500/0 to-fuchsia-500/0 group-hover:from-violet-500/5 group-hover:to-fuchsia-500/5 transition-all duration-300" />
-                <CardContent className="relative p-6 space-y-4">
-                  <div className={cn('inline-flex p-3 rounded-xl bg-gradient-to-br', feature.gradient, 'shadow-lg', feature.glowColor, 'group-hover:shadow-xl transition-all duration-300')}>
-                    <feature.icon className="w-6 h-6 text-white" />
-                  </div>
-                  <h3 className="text-xl font-bold text-white group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-violet-400 group-hover:to-fuchsia-400 group-hover:bg-clip-text transition-all duration-300">
-                    {feature.title}
-                  </h3>
-                  <p className="text-zinc-400 leading-relaxed">
-                    {feature.description}
-                  </p>
-                </CardContent>
-              </Card>
+              { icon: BarChart2, title: 'Live Dashboard', desc: 'Current month income vs. expenses, trends, and breakdowns.' },
+              { icon: PieChart, title: 'Category Mastery', desc: 'Default + custom categories with color and icon personalization.' },
+              { icon: Zap, title: 'Quick Add', desc: 'Ultra-fast transaction entry with smart defaults and validation.' },
+              { icon: Repeat, title: 'Recurring', desc: 'Daily, weekly, monthly, or yearly with auto-generation on schedule.' },
+              { icon: UploadCloud, title: 'Receipts', desc: 'Attach receipts to transactions for clean record-keeping.' },
+              { icon: Download, title: 'Exports', desc: 'CSV/PDF exports (coming soon) for reports and sharing.' },
+            ].map(({ icon: Icon, title, desc }) => (
+              <div key={title} className="rounded-xl border p-5 hover:translate-y-[-2px] transition-transform" style={{ borderColor: 'rgba(147,51,234,0.15)' }}>
+                <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-lg" style={{ backgroundColor: 'rgba(147,51,234,0.08)' }}>
+                  <Icon size={18} style={{ color: '#9333ea' }} />
+                </div>
+                <h4 className="font-semibold">{title}</h4>
+                <p className="mt-1 text-sm text-zinc-400">{desc}</p>
+              </div>
             ))}
           </div>
         </section>
 
-        <section className="container max-w-7xl mx-auto px-4 py-20">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              <span className="bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
-                Loved by Thousands
-              </span>
-            </h2>
-            <p className="text-xl text-zinc-400">
-              Join the community making smarter financial decisions
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6">
+        {/* How it works */}
+        <section className="mt-16 md:mt-24">
+          <h3 className="text-xl font-semibold mb-6" style={{ color: '#9333ea' }}>How Penny works</h3>
+          <div className="grid gap-4 md:grid-cols-3">
             {[
-              {
-                name: 'Sarah Chen',
-                role: 'Product Designer',
-                content: 'Finally, a budget app that doesn\'t feel like homework. The UI is gorgeous and it actually makes me want to track my spending!',
-                rating: 5,
-              },
-              {
-                name: 'Marcus Johnson',
-                role: 'Software Engineer',
-                content: 'The visualizations are incredible. I can see exactly where my money goes and it\'s helped me save $500 a month!',
-                rating: 5,
-              },
-              {
-                name: 'Emma Rodriguez',
-                role: 'Content Creator',
-                content: 'Love the dark mode and the smooth animations. It\'s like the Apple of budget apps. Highly recommend!',
-                rating: 5,
-              },
-            ].map((testimonial, i) => (
-              <Card
-                key={i}
-                className="bg-gradient-to-br from-zinc-900/90 to-zinc-800/90 border-2 border-zinc-700/50 backdrop-blur-xl hover:border-violet-500/50 transition-all duration-300 hover:scale-105"
-                style={{ animationDelay: `${i * 150}ms` }}
-              >
-                <CardContent className="p-6 space-y-4">
-                  <div className="flex gap-1 text-yellow-400">
-                    {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-current" />
-                    ))}
-                  </div>
-                  <p className="text-zinc-300 leading-relaxed">
-                    "{testimonial.content}"
-                  </p>
-                  <div className="flex items-center gap-3 pt-2">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500" />
-                    <div>
-                      <p className="font-semibold text-white">{testimonial.name}</p>
-                      <p className="text-sm text-zinc-400">{testimonial.role}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+              { step: '01', title: 'Sign in securely', desc: 'Use Google Sign-In. Your data is scoped to your account.' },
+              { step: '02', title: 'Add your data', desc: 'Log income/expenses, create categories, attach receipts.' },
+              { step: '03', title: 'See insights', desc: 'Real-time dashboard highlights trends and spending patterns.' },
+            ].map(({ step, title, desc }) => (
+              <div key={step} className="rounded-xl border p-5" style={{ borderColor: 'rgba(147,51,234,0.15)' }}>
+                <div className="text-xs font-bold" style={{ color: '#9333ea' }}>{step}</div>
+                <h4 className="mt-1 font-semibold">{title}</h4>
+                <p className="mt-1 text-sm text-zinc-400">{desc}</p>
+              </div>
             ))}
           </div>
         </section>
 
-        <section className="container max-w-7xl mx-auto px-4 py-20">
-          <Card className="relative bg-gradient-to-br from-violet-600 to-fuchsia-600 border-0 overflow-hidden">
-            <div className="absolute inset-0 opacity-20">
-              <div className="absolute top-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl" />
-              <div className="absolute bottom-0 left-0 w-96 h-96 bg-pink-500 rounded-full blur-3xl" />
-            </div>
-            <CardContent className="relative p-12 md:p-16 text-center space-y-8">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 backdrop-blur-sm">
-                <Clock className="w-4 h-4 text-white" />
-                <span className="text-sm font-medium text-white">Limited Time Offer</span>
-              </div>
-
-              <h2 className="text-4xl md:text-6xl font-bold text-white">
-                Start Your Financial
-                <br />
-                Journey Today
-              </h2>
-
-              <p className="text-xl text-violet-100 max-w-2xl mx-auto">
-                Join 10,000+ users who are already taking control of their finances.
-                No credit card required.
-              </p>
-
-              <div className="flex flex-wrap gap-4 justify-center">
-                <Button
-                  onClick={onGetStarted}
-                  size="lg"
-                  className="bg-white text-violet-600 hover:bg-zinc-100 text-lg px-8 py-6 rounded-xl shadow-2xl hover:shadow-white/20 hover:scale-105 transition-all duration-300 group"
-                >
-                  Get Started Free
-                  <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-                </Button>
-              </div>
-
-              <div className="flex flex-wrap items-center justify-center gap-8 pt-8">
-                {[
-                  { icon: CheckCircle2, text: 'No credit card' },
-                  { icon: CheckCircle2, text: 'Free forever' },
-                  { icon: CheckCircle2, text: 'Cancel anytime' },
-                ].map((item, i) => (
-                  <div key={i} className="flex items-center gap-2 text-white">
-                    <item.icon className="w-5 h-5" />
-                    <span className="text-sm font-medium">{item.text}</span>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </section>
-
-        <footer className="container max-w-7xl mx-auto px-4 py-12 border-t border-zinc-800">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+        {/* Trust strip */}
+        <section className="mt-16 md:mt-24 rounded-xl border px-6 py-5" style={{ borderColor: 'rgba(147,51,234,0.15)' }}>
+          <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-600 to-fuchsia-600 flex items-center justify-center">
-                <Sparkles className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-lg font-bold bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
-                Penny
-              </span>
+              <Shield size={18} style={{ color: '#9333ea' }} />
+              <span className="text-sm text-zinc-300">Secure by design: session-based access, per-user data isolation.</span>
             </div>
-            <p className="text-sm text-zinc-500">
-              © 2024 Penny. Made with love for smarter budgeting.
-            </p>
+            <div className="flex items-center gap-2">
+              <Layers size={18} style={{ color: '#9333ea' }} />
+              <span className="text-sm text-zinc-300">MongoDB backend with robust API routes.</span>
+            </div>
+          </div>
+        </section>
+
+        {/* CTA */}
+        <section className="mt-12 md:mt-16 text-center">
+          <h4 className="text-2xl font-bold">Ready to budget like royalty?</h4>
+          <p className="mt-2 text-zinc-400">Sign in and start tracking in under 10 seconds.</p>
+          <div className="mt-5 flex justify-center gap-3">
+            <Button
+              onClick={() => signIn('google')}
+              className="bg-[#9333ea] text-white hover:bg-[#7c3aed]"
+            >
+              Get Started
+            </Button>
+            <Button
+              onClick={() => signIn('google')}
+              className="bg-black border border-[#9333ea] text-[#9333ea] hover:bg-[#0f0f0f]"
+              variant="outline"
+            >
+              Sign in with Google
+            </Button>
+          </div>
+        </section>
+
+        {/* Footer */}
+        <footer className="mt-16 md:mt-20 border-t pt-6 text-sm text-zinc-500" style={{ borderColor: 'rgba(147,51,234,0.15)' }}>
+          <div className="flex items-center justify-between">
+            <span>© {new Date().getFullYear()} Penny</span>
+            <div className="flex items-center gap-4">
+              <span>Privacy</span>
+              <span>Terms</span>
+              <span>Contact</span>
+            </div>
           </div>
         </footer>
       </div>
     </div>
   );
 }
+
