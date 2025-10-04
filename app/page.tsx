@@ -3,70 +3,59 @@
 import { useState, useEffect } from 'react';
 import { Transaction, Category, RecurringTransaction } from '@/types';
 import {
-  fetchCategories,
-  fetchTransactions,
-  fetchRecurring,
-  createTransaction,
-  deleteTransactionApi,
-  createCategory,
-  updateCategoryApi,
-  deleteCategoryApi,
-  createRecurring,
-  updateRecurringApi,
-  deleteRecurringApi,
-} from '@/lib/api';
+  getCategories,
+  getTransactions,
+  getRecurringTransactions,
+  saveTransaction,
+  deleteTransaction,
+  saveCategory,
+  updateCategory,
+  deleteCategory,
+  saveRecurringTransaction,
+  updateRecurringTransaction,
+  deleteRecurringTransaction,
+  initializeCategories,
+} from '@/lib/storage';
+import { Landing } from '@/components/landing';
 import { DashboardOverview } from '@/components/dashboard-overview';
 import { QuickAddForm } from '@/components/quick-add-form';
 import { TransactionList } from '@/components/transaction-list';
 import { CategoryManager } from '@/components/category-manager';
 import { RecurringManager } from '@/components/recurring-manager';
 import { Button } from '@/components/ui/button';
-import { useSession } from 'next-auth/react';
-import { Landing } from '@/components/landing';
-import { Navbar } from '@/components/navbar';
-import { FloatingAddButton } from '@/components/floating-add-button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Plus } from 'lucide-react';
+import { Plus, LayoutDashboard, Receipt, BarChart3, Settings, Repeat } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function Home() {
-  const { data: session, status } = useSession();
   const [categories, setCategories] = useState<Category[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [recurring, setRecurring] = useState<RecurringTransaction[]>([]);
   const [showQuickAdd, setShowQuickAdd] = useState(false);
+  const [showLanding, setShowLanding] = useState(true);
   const [mounted, setMounted] = useState(false);
-  const [currentTab, setCurrentTab] = useState('dashboard');
 
   useEffect(() => {
     setMounted(true);
+    const hasVisited = localStorage.getItem('penny_visited');
+    if (hasVisited) {
+      setShowLanding(false);
+    }
+    initializeCategories();
+    loadData();
   }, []);
 
-  useEffect(() => {
-    if (status === 'authenticated') {
-      loadData();
-    } else {
-      setCategories([]);
-      setTransactions([]);
-      setRecurring([]);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [status]);
+  const loadData = () => {
+    setCategories(getCategories());
+    setTransactions(getTransactions());
+    setRecurring(getRecurringTransactions());
+  };
 
-  const loadData = async () => {
-    try {
-      const [cats, txns, rec] = await Promise.all([
-        fetchCategories(),
-        fetchTransactions(),
-        fetchRecurring(),
-      ]);
-      setCategories(cats);
-      setTransactions(txns);
-      setRecurring(rec);
-    } catch (e) {
-      // ignore for now, toast could be added
-    }
+  const handleGetStarted = () => {
+    localStorage.setItem('penny_visited', 'true');
+    setShowLanding(false);
   };
 
   const handleAddTransaction = (data: {
@@ -75,60 +64,32 @@ export default function Home() {
     categoryId: string;
     date: Date;
     description?: string;
-    receiptFile?: File | null;
   }) => {
-    const doCreate = async () => {
-      let receiptUrl: string | undefined = undefined;
-      if (data.receiptFile) {
-        try {
-          const { uploadReceipt } = await import('@/lib/api');
-          receiptUrl = await uploadReceipt(data.receiptFile);
-        } catch {}
-      }
-      await createTransaction({
-        amount: data.amount,
-        type: data.type,
-        categoryId: data.categoryId,
-        date: data.date,
-        description: data.description,
-        receiptUrl,
-      } as any);
-    };
-
-    doCreate()
-      .then(() => {
-        loadData();
-        setShowQuickAdd(false);
-        toast.success('Transaction added successfully');
-      })
-      .catch(() => toast.error('Failed to add transaction'));
+    saveTransaction({
+      ...data,
+      userId: 'default_user',
+    });
+    loadData();
+    setShowQuickAdd(false);
+    toast.success('Transaction added successfully');
   };
 
   const handleDeleteTransaction = (id: string) => {
-    deleteTransactionApi(id)
-      .then(() => {
-        loadData();
-        toast.success('Transaction deleted');
-      })
-      .catch(() => toast.error('Failed to delete transaction'));
+    deleteTransaction(id);
+    loadData();
+    toast.success('Transaction deleted');
   };
 
   const handleAddCategory = (category: Omit<Category, 'id' | 'createdAt'>) => {
-    createCategory(category)
-      .then(() => {
-        loadData();
-        toast.success('Category created successfully');
-      })
-      .catch(() => toast.error('Failed to create category'));
+    saveCategory(category);
+    loadData();
+    toast.success('Category created successfully');
   };
 
   const handleUpdateCategory = (id: string, updates: Partial<Category>) => {
-    updateCategoryApi(id, updates)
-      .then(() => {
-        loadData();
-        toast.success('Category updated successfully');
-      })
-      .catch(() => toast.error('Failed to update category'));
+    updateCategory(id, updates);
+    loadData();
+    toast.success('Category updated successfully');
   };
 
   const handleDeleteCategory = (id: string) => {
@@ -137,63 +98,85 @@ export default function Home() {
       toast.error('Cannot delete category with existing transactions');
       return;
     }
-    deleteCategoryApi(id)
-      .then(() => {
-        loadData();
-        toast.success('Category deleted');
-      })
-      .catch(() => toast.error('Failed to delete category'));
+    deleteCategory(id);
+    loadData();
+    toast.success('Category deleted');
   };
 
   const handleAddRecurring = (data: Omit<RecurringTransaction, 'id' | 'createdAt' | 'updatedAt'>) => {
-    createRecurring(data)
-      .then(() => {
-        loadData();
-        toast.success('Recurring transaction created');
-      })
-      .catch(() => toast.error('Failed to create recurring'));
+    saveRecurringTransaction(data);
+    loadData();
+    toast.success('Recurring transaction created');
   };
 
   const handleUpdateRecurring = (id: string, updates: Partial<RecurringTransaction>) => {
-    updateRecurringApi(id, updates)
-      .then(() => {
-        loadData();
-        toast.success('Recurring transaction updated');
-      })
-      .catch(() => toast.error('Failed to update recurring'));
+    updateRecurringTransaction(id, updates);
+    loadData();
+    toast.success('Recurring transaction updated');
   };
 
   const handleDeleteRecurring = (id: string) => {
-    deleteRecurringApi(id)
-      .then(() => {
-        loadData();
-        toast.success('Recurring transaction deleted');
-      })
-      .catch(() => toast.error('Failed to delete recurring'));
+    deleteRecurringTransaction(id);
+    loadData();
+    toast.success('Recurring transaction deleted');
   };
 
   if (!mounted) {
     return null;
   }
 
-  if (status !== 'authenticated') {
-    return <Landing />;
+  if (showLanding) {
+    return <Landing onGetStarted={handleGetStarted} />;
   }
 
   return (
     <div className="min-h-screen">
-      <Navbar 
-        currentTab={currentTab}
-        onTabChange={setCurrentTab}
-        showTabs={true}
-      />
       <div className="container max-w-7xl mx-auto px-4 py-8">
-        <div className="space-y-6">
-          {currentTab === 'dashboard' && (
-            <DashboardOverview transactions={transactions} categories={categories} />
-          )}
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
+              Penny
+            </h1>
+            <p className="text-zinc-400 mt-1">Smart budget tracking made simple</p>
+          </div>
+          <Button
+            onClick={() => setShowQuickAdd(true)}
+            className="bg-violet-600 hover:bg-violet-700"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Quick Add
+          </Button>
+        </div>
 
-          {currentTab === 'transactions' && (
+        <Tabs defaultValue="dashboard" className="space-y-6">
+          <TabsList className="grid w-full max-w-2xl mx-auto grid-cols-5 bg-zinc-900 border border-zinc-800">
+            <TabsTrigger value="dashboard" className="data-[state=active]:bg-zinc-800">
+              <LayoutDashboard className="w-4 h-4 mr-2" />
+              <span className="hidden sm:inline">Dashboard</span>
+            </TabsTrigger>
+            <TabsTrigger value="transactions" className="data-[state=active]:bg-zinc-800">
+              <Receipt className="w-4 h-4 mr-2" />
+              <span className="hidden sm:inline">Transactions</span>
+            </TabsTrigger>
+            <TabsTrigger value="recurring" className="data-[state=active]:bg-zinc-800">
+              <Repeat className="w-4 h-4 mr-2" />
+              <span className="hidden sm:inline">Recurring</span>
+            </TabsTrigger>
+            <TabsTrigger value="categories" className="data-[state=active]:bg-zinc-800">
+              <BarChart3 className="w-4 h-4 mr-2" />
+              <span className="hidden sm:inline">Categories</span>
+            </TabsTrigger>
+            <TabsTrigger value="settings" className="data-[state=active]:bg-zinc-800">
+              <Settings className="w-4 h-4 mr-2" />
+              <span className="hidden sm:inline">Settings</span>
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="dashboard">
+            <DashboardOverview transactions={transactions} categories={categories} />
+          </TabsContent>
+
+          <TabsContent value="transactions">
             <Card className="bg-zinc-900 border-zinc-800">
               <CardHeader>
                 <div className="flex items-center justify-between">
@@ -216,9 +199,9 @@ export default function Home() {
                 />
               </CardContent>
             </Card>
-          )}
+          </TabsContent>
 
-          {currentTab === 'recurring' && (
+          <TabsContent value="recurring">
             <Card className="bg-zinc-900 border-zinc-800">
               <CardContent className="pt-6">
                 <RecurringManager
@@ -230,9 +213,9 @@ export default function Home() {
                 />
               </CardContent>
             </Card>
-          )}
+          </TabsContent>
 
-          {currentTab === 'categories' && (
+          <TabsContent value="categories">
             <Card className="bg-zinc-900 border-zinc-800">
               <CardContent className="pt-6">
                 <CategoryManager
@@ -243,9 +226,9 @@ export default function Home() {
                 />
               </CardContent>
             </Card>
-          )}
+          </TabsContent>
 
-          {currentTab === 'settings' && (
+          <TabsContent value="settings">
             <Card className="bg-zinc-900 border-zinc-800">
               <CardHeader>
                 <CardTitle className="text-white">Settings</CardTitle>
@@ -271,14 +254,24 @@ export default function Home() {
                     <h3 className="text-lg font-semibold text-white mb-2">Version</h3>
                     <p className="text-zinc-400">Penny v1.0.0</p>
                   </div>
+                  <div className="pt-4">
+                    <Button
+                      onClick={() => {
+                        localStorage.removeItem('penny_visited');
+                        setShowLanding(true);
+                      }}
+                      variant="outline"
+                      className="border-violet-500/50 text-violet-400 hover:bg-violet-500/10"
+                    >
+                      View Landing Page
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>
-          )}
-        </div>
+          </TabsContent>
+        </Tabs>
       </div>
-
-      <FloatingAddButton onClick={() => setShowQuickAdd(true)} />
 
       <Dialog open={showQuickAdd} onOpenChange={setShowQuickAdd}>
         <DialogContent className="bg-zinc-900 border-zinc-700 text-white">
