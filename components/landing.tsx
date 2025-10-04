@@ -3,21 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import {
-  Wallet,
-  TrendingUp,
-  PieChart,
-  Zap,
-  Shield,
-  Smartphone,
-  ArrowRight,
-  Star,
-  Sparkles,
-  Target,
-  BarChart3,
-  Clock,
-  CheckCircle2,
-} from 'lucide-react';
+import { Wallet, TrendingUp, ChartPie as PieChart, Zap, Shield, Smartphone, ArrowRight, Star, Sparkles, Target, ChartBar as BarChart3, Clock, CircleCheck as CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface LandingProps {
