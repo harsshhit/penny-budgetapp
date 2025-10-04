@@ -211,10 +211,10 @@ export function Landing() {
           <h4 className="text-2xl font-bold">Ready to budget like royalty?</h4>
           <p className="mt-2 text-zinc-400">Sign in and start tracking in under 10 seconds.</p>
           <div className="mt-5 flex justify-center gap-3">
-            <Button onClick={() => signIn('google')} className="bg-[#FFD700] text-black hover:bg-[#e6c200]">
+            <Button onClick={() => signIn('google')} className="bg-[#9333ea] text-black hover:bg-[#e6c200]">
               Get Started
             </Button>
-            <Button onClick={() => signIn('google')} className="bg-black border border-[#FFD700] text-[#FFD700] hover:bg-[#0f0f0f]" variant="outline">
+            <Button onClick={() => signIn('google')} className="bg-black border border-[#9333ea] text-[#9333ea] hover:bg-[#0f0f0f]" variant="outline">
               Sign in with Google
             </Button>
           </div>
