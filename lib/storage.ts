@@ -1,5 +1,4 @@
 import { Category, Transaction, RecurringTransaction } from '@/types';
-import { DEFAULT_CATEGORIES } from './default-categories';
 
 const STORAGE_KEYS = {
   CATEGORIES: 'penny_categories',
@@ -21,61 +20,6 @@ export function getUserId(): string {
     localStorage.setItem(STORAGE_KEYS.USER_ID, userId);
   }
   return userId;
-}
-
-export function initializeCategories(): Category[] {
-  if (typeof window === 'undefined') return [];
-
-  const stored = localStorage.getItem(STORAGE_KEYS.CATEGORIES);
-  if (stored) {
-    return JSON.parse(stored);
-  }
-
-  const categories: Category[] = DEFAULT_CATEGORIES.map(cat => ({
-    ...cat,
-    id: generateId(),
-    createdAt: new Date(),
-  }));
-
-  localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(categories));
-  return categories;
-}
-
-export function getCategories(): Category[] {
-  if (typeof window === 'undefined') return [];
-  const stored = localStorage.getItem(STORAGE_KEYS.CATEGORIES);
-  return stored ? JSON.parse(stored) : initializeCategories();
-}
-
-export function saveCategory(category: Omit<Category, 'id' | 'createdAt'>): Category {
-  const categories = getCategories();
-  const newCategory: Category = {
-    ...category,
-    id: generateId(),
-    createdAt: new Date(),
-  };
-  categories.push(newCategory);
-  localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(categories));
-  return newCategory;
-}
-
-export function updateCategory(id: string, updates: Partial<Category>): Category | null {
-  const categories = getCategories();
-  const index = categories.findIndex(c => c.id === id);
-  if (index === -1) return null;
-
-  categories[index] = { ...categories[index], ...updates };
-  localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(categories));
-  return categories[index];
-}
-
-export function deleteCategory(id: string): boolean {
-  const categories = getCategories();
-  const filtered = categories.filter(c => c.id !== id);
-  if (filtered.length === categories.length) return false;
-
-  localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(filtered));
-  return true;
 }
 
 export function getTransactions(): Transaction[] {

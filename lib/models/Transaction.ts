@@ -4,7 +4,6 @@ export interface ITransaction {
   userId: string;
   amount: number;
   type: 'income' | 'expense';
-  categoryId: string;
   date: Date;
   description?: string;
   receiptUrl?: string;
@@ -17,7 +16,6 @@ const TransactionSchema = new Schema<ITransaction>(
     userId: { type: String, index: true, required: true },
     amount: { type: Number, required: true },
     type: { type: String, enum: ['income', 'expense'], required: true },
-    categoryId: { type: String, required: true },
     date: { type: Date, required: true },
     description: { type: String },
     receiptUrl: { type: String },

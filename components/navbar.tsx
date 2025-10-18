@@ -32,8 +32,8 @@ export function Navbar({
   const tabs = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'transactions', label: 'Transactions', icon: Receipt },
-    { id: 'recurring', label: 'Recurring', icon: Repeat },
-    { id: 'categories', label: 'Categories', icon: BarChart3 },
+    // { id: 'recurring', label: 'Recurring', icon: Repeat },
+    // { id: 'categories', label: 'Categories', icon: BarChart3 },
     { id: 'settings', label: 'Settings', icon: Settings },
   ];
 
@@ -48,7 +48,13 @@ export function Navbar({
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <div className="flex items-center gap-2">
-            <Image src="/logo.png" alt="Penny" width={120} height={40} />
+            <Image
+              src="/logo.png"
+              alt="Penny"
+              width={120}
+              height={120}
+              style={{ width: 'auto', height: '40px' }}
+            />
           </div>
 
           {/* Desktop Navigation */}
@@ -84,7 +90,7 @@ export function Navbar({
                     <Button
                       variant="outline"
                       size="sm"
-                      className="border-[#9333ea] text-[#9333ea] hover:bg-[#0f0f0f]"
+                      className="border-[#059669] text-[#059669] hover:bg-[#0f0f0f]"
                       onClick={() => setIsMenuOpen(!isMenuOpen)}
                     >
                       <User className="w-4 h-4 mr-2" />
@@ -110,7 +116,7 @@ export function Navbar({
                 <div className="flex items-center gap-3">
                   <Button
                     onClick={() => signIn('google')}
-                    className="bg-black border border-[#9333ea] text-[#9333ea] hover:bg-[#0f0f0f]"
+                    className="bg-black border border-[#059669] text-[#059669] hover:bg-[#0f0f0f]"
                     variant="outline"
                     size="sm"
                   >
@@ -118,7 +124,7 @@ export function Navbar({
                   </Button>
                   <Button
                     onClick={() => signIn('google')}
-                    className="bg-[#9333ea] text-white hover:bg-[#7c3aed]"
+                    className="bg-[#059669] text-white hover:bg-[#7c3aed]"
                     size="sm"
                   >
                     Get Started
@@ -133,7 +139,7 @@ export function Navbar({
             <Button
               variant="outline"
               size="sm"
-              className="border-[#9333ea] text-[#9333ea]"
+              className="border-[#059669] text-[#059669]"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
               Menu
@@ -174,7 +180,7 @@ export function Navbar({
                 <Button
                   onClick={handleSignOut}
                   variant="outline"
-                  className="w-full border-[#9333ea] text-[#9333ea] hover:bg-[#0f0f0f]"
+                  className="w-full border-[#059669] text-[#059669] hover:bg-[#0f0f0f]"
                   size="sm"
                 >
                   <LogOut className="w-4 h-4 mr-2" />
@@ -185,7 +191,7 @@ export function Navbar({
               <div className="space-y-2">
                 <Button
                   onClick={() => signIn('google')}
-                  className="w-full bg-[#9333ea] text-white hover:bg-[#7c3aed]"
+                  className="w-full bg-[#059669] text-white hover:bg-[#7c3aed]"
                   size="sm"
                 >
                   Get Started
@@ -193,7 +199,7 @@ export function Navbar({
                 <Button
                   onClick={() => signIn('google')}
                   variant="outline"
-                  className="w-full border-[#9333ea] text-[#9333ea] hover:bg-[#0f0f0f]"
+                  className="w-full border-[#059669] text-[#059669] hover:bg-[#0f0f0f]"
                   size="sm"
                 >
                   Sign in with Google
